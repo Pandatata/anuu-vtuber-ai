@@ -7,7 +7,7 @@ import { connectTwitchChat } from './twitch_listener.js';
 // --- Configuration ---
 // **IMPORTANT**: Replace 'YOUR_TWITCH_CHANNEL' with your Twitch channel name
 const TWITCH_CHANNEL = 'YOUR_TWITCH_CHANNEL_HERE';
-const VRM_MODEL_PATH = 'models/anuu.vrm'; // Path to your VRM model
+const VRM_MODEL_PATH = './models/anuu.vrm'; // Path to your VRM model
 
 // --- Main Application Logic ---
 

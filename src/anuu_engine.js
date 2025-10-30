@@ -10,12 +10,12 @@ async function loadAnuuData() {
         nexo,
         titanico
     ] = await Promise.all([
-        fetch('data/ANUU COLOSSAL.json').then(res => res.json()),
-        fetch('data/Anuu___.json').then(res => res.json()),
-        fetch('data/Comportamiento anuu.json').then(res => res.json()),
-        fetch('data/DEIDADES.json').then(res => res.json()),
-        fetch('data/anuu nexo.json').then(res => res.json()),
-        fetch('data/anuu titanico.json').then(res => res.json())
+        fetch('./data/ANUU COLOSSAL.json').then(res => res.json()),
+        fetch('./data/Anuu___.json').then(res => res.json()),
+        fetch('./data/Comportamiento anuu.json').then(res => res.json()),
+        fetch('./data/DEIDADES.json').then(res => res.json()),
+        fetch('./data/anuu nexo.json').then(res => res.json()),
+        fetch('./data/anuu titanico.json').then(res => res.json())
     ]);
     return { colossal, anuuMeta, comportamiento, deidades, nexo, titanico };
 }
