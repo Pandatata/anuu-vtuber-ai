@@ -1,11 +1,12 @@
 // Main orchestrator for AnuuVT-Core
 
-import { loadVRM } from './vrm_loader.js';
+import { loadVRM, startLipSync } from './vrm_loader.js';
 import { generateResponse } from './anuu_engine.js';
 import { connectTwitchChat } from './twitch_listener.js';
 
 // --- Configuration ---
-const TWITCH_CHANNEL = 'YOUR_TWITCH_CHANNEL'; // <--- IMPORTANT: Replace with your Twitch channel
+// **IMPORTANT**: Replace 'YOUR_TWITCH_CHANNEL' with your Twitch channel name
+const TWITCH_CHANNEL = 'YOUR_TWITCH_CHANNEL_HERE';
 const VRM_MODEL_PATH = '../models/anuu.vrm'; // Path to your VRM model
 
 // --- Main Application Logic ---
@@ -24,8 +25,17 @@ async function handleChatMessage(message, user) {
     const response = await generateResponse(message, user);
     console.log(`[Anuu] ${response.text}`);
 
-    // TODO: Trigger avatar animation/lip-sync with the response text
+    // Trigger avatar lip-sync
+    startLipSync();
+
+    // Display the response on the page
+    const responseDiv = document.getElementById('response');
+    responseDiv.innerText = `[${user}] ${message}\n[Anuu] ${response.text}`;
 }
 
-// 4. Connect to Twitch chat
-connectTwitchChat(TWITCH_CHANNEL, handleChatMessage);
+// 4. Connect to Twitch chat if a channel is provided
+if (TWITCH_CHANNEL !== 'YOUR_TWITCH_CHANNEL_HERE') {
+    connectTwitchChat(TWITCH_CHANNEL, handleChatMessage);
+} else {
+    console.warn('Twitch channel not configured. Please edit src/main.js and set the TWITCH_CHANNEL variable.');
+}

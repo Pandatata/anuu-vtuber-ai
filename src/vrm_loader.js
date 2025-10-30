@@ -5,7 +5,7 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { VRM, VRMUtils } from '@pixiv/three-vrm';
 
 // Scene setup
-let scene, camera, renderer;
+let scene, camera, renderer, vrm;
 
 export async function loadVRM(modelPath, canvas) {
     scene = new THREE.Scene();
@@ -23,7 +23,7 @@ export async function loadVRM(modelPath, canvas) {
     const loader = new GLTFLoader();
     const gltf = await loader.loadAsync(modelPath);
 
-    const vrm = await VRM.from(gltf);
+    vrm = await VRM.from(gltf);
     scene.add(vrm.scene);
 
     VRMUtils.rotateVRM0(vrm); // Rotate the model to face the camera
@@ -33,8 +33,43 @@ export async function loadVRM(modelPath, canvas) {
     function animate() {
         requestAnimationFrame(animate);
         const delta = clock.getDelta();
-        vrm.update(delta);
+        if (vrm) {
+            vrm.update(delta);
+        }
         renderer.render(scene, camera);
     }
     animate();
+}
+
+let lipSyncTimeout;
+export function startLipSync() {
+    if (!vrm) return;
+
+    // Clear any existing lip-sync timeout
+    if (lipSyncTimeout) {
+        clearTimeout(lipSyncTimeout);
+    }
+
+    const expressionManager = vrm.expressionManager;
+    const blendShapeA = expressionManager.getExpression('a');
+
+    if (!blendShapeA) return;
+
+    let lipSyncCounter = 0;
+    const lipSyncDuration = 3000; // 3 seconds
+    const interval = 100; // 100ms
+
+    function animateLipSync() {
+        if (lipSyncCounter * interval >= lipSyncDuration) {
+            expressionManager.setValue(blendShapeA.name, 0);
+            return;
+        }
+
+        const value = Math.random() * 0.75;
+        expressionManager.setValue(blendShapeA.name, value);
+        lipSyncCounter++;
+        lipSyncTimeout = setTimeout(animateLipSync, interval);
+    }
+
+    animateLipSync();
 }
